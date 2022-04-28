@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Proveedor</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    </h:head>
+    <h:body>
+
+        <h:form id="formInsertar" >
+            <center>
+                <p:panel header="INGRESAR NUEVO PROVEEDOR">
+
+
+                    <h:panelGrid columns="2" cellpadding="5">
+                        <p:outputLabel value="Empresa:"/>
+                        <p:inputText value="#{proveedorBean.proveedor.empresa}" maxlength="45" required="true" requiredMessage="Nombre de la empresa es obligatoria"/>
+                        <p:outputLabel value="Nombre Responsable:"/>
+                        <p:inputText value="#{proveedorBean.proveedor.nombreRes}" maxlength="45" required="true" requiredMessage="Nombre del responsable es obligatorio"/>
+                        <p:outputLabel value="Telefono:"/>
+                        <p:inputText type="number" value="#{proveedorBean.proveedor.telefono}" maxlength="12" required="true" requiredMessage="Telefono es obligatorio"/>
+                    </h:panelGrid>
+                    <p:growl id="growl" life="1000"/>
+                    <p:commandButton actionListener="#{proveedorBean.insertar()}"
+                                     value ="Agregar Proveedor" update =":formListar :formInsertar" icon="ui-icon-disk"/>
+                    <p:commandButton actionListener="#{proveedorBean.cancelar()}"
+                                     value ="Cancelar" update =":formInsertar" icon="ui-icon-close"/>      
+                </p:panel>
+            </center>
+        </h:form> 
+        <h:form id="formListar">
+             <center>
+                 <p:panel header="BÚSQUEDA Y LISTADO">
+            <div style="float:right;padding-top: 5px;">
+                <p:outputLabel value="Exportar datos"/>
+                <h:commandLink>
+                    <h:graphicImage url="/images/pdf.png" width="24"/>
+                    <p:dataExporter type="pdf" target="t1" fileName="Proveedores" />
+                </h:commandLink>
+
+                <h:commandLink>
+                    <h:graphicImage url="/images/excel.png" width="27"/>
+                    <p:dataExporter type="xls" target="t1" fileName="Proveedores" />
+                </h:commandLink>   
+            </div> 
+            <p:dataTable id="t1" var="car" value="#{proveedorBean.proveedors}"  rows="5" paginator="true" paginatorPosition="top" paginatorTemplate="{CurrentPageReport}
+                                     {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} 
+                                     {LastPageLink} {RowsPerPageDropdown}"
+                                     rowsPerPageTemplate="5,10,15">
+                <p:column headerText="Id Proveedor" filterBy="#{car.idProv}">
+                    <h:outputText value="#{car.idProv}" />
+                </p:column>
+
+                <p:column headerText="Empresa" filterBy="#{car.empresa}">
+                    <h:outputText value="#{car.empresa}" />
+                </p:column>
+
+                <p:column headerText="Nombre responsable" filterBy="#{car.nombreRes}">
+                    <h:outputText value="#{car.nombreRes}" />
+                </p:column>
+
+                <p:column headerText="Telefono" filterBy="#{car.telefono}">
+                    <h:outputText value="#{car.telefono}" />
+                </p:column>
+                <p:column headerText="Accion" exportable="false">
+                    <center>
+                    <p:commandButton value="Editar"
+                                     onclick="PF('dlgmodificar').show()"
+                                     update=":formModificar" icon="ui-icon-pencil">
+                        <f:setPropertyActionListener
+                            target="#{proveedorBean.proveedor}"
+                            value="#{car}"/>
+                    </p:commandButton> 
+                        </center>
+                </p:column>
+
+                <p:column headerText="Accion" exportable="false">
+                    <center>
+                    <p:commandButton value="Eliminar"
+                                     onclick="PF('dlgeliminar').show()"
+                                     update=":formModificar" icon="ui-icon-trash">
+                        <f:setPropertyActionListener
+                            target="#{proveedorBean.proveedor}"
+                            value="#{car}"/>
+                    </p:commandButton> 
+                        </center>
+                </p:column>
+            </p:dataTable> 
+                     </p:panel>
+             </center>
+        </h:form>
+        <p:dialog id="dlg" header="Modificar Proveedor"
+                  showEffect="explode" hideEffect="explode"
+                  widgetVar="dlgmodificar" modal="true"
+                  resizable="false" minWidth="200">
+            
+          <p:growl id="mensajeGeneral" autoUpdate="true" showDetail="true" life="3000"/>
+            <h:form id="formModificar"> 
+                <h:panelGrid columns="2" cellpadding="5">
+                    <p:outputLabel value="Empresa:"/>
+                    <p:inputText value="#{proveedorBean.proveedor.empresa}" maxlength="45" required="true" requiredMessage="Nombre de la empresa es obligatoria"/>
+                    <p:outputLabel value="Nombre Responsable:"/>
+                    <p:inputText value="#{proveedorBean.proveedor.nombreRes}" maxlength="45" required="true" requiredMessage="Nombre del responsable es obligatorio"/>
+                    <p:outputLabel value="Telefono:"/>
+                    <p:inputText type="number" value="#{proveedorBean.proveedor.telefono}" maxlength="12" required="true" requiredMessage="Telefono es obligatorio"/>
+
+                </h:panelGrid>
+                <center>
+                <p:commandButton actionListener="#{proveedorBean.modificar()}"
+                                 value="Modificar Proveedor"
+                                 update=":formListar"
+                                   icon="ui-icon-check"
+                                 onclick="PF('dlgmodificar').hide();"/>
+                <p:commandButton value="Cancelar"
+                                   icon="ui-icon-close"
+                                 onclick="PF('dlgmodificar').hide();"/>
+                </center>
+            </h:form> 
+
+        </p:dialog>
+
+        <p:dialog id="dlg2" header="Eliminar proveedor"
+                  showEffect="explode" hideEffect="explode"
+                  widgetVar="dlgeliminar" modal="true"
+                  resizable="false" minWidth="200">
+            <h:form id="formEliminar"> 
+                 <h:outputLabel value="¿Esta seguro de eliminar? El registro puede estar relacionado con otros y no realizarse la eliminación"/>
+                <center>
+
+                <p:commandButton actionListener="#{proveedorBean.eliminar()}"
+                                 value="Si"
+                                 update=":formListar"
+                                   icon="ui-icon-check"
+                                 onclick="PF('dlgeliminar').hide();"/>
+                <p:commandButton value="No"
+                                 actionListener="#{proveedorBean.cancelar()}"
+                                   icon="ui-icon-close"
+                                 onclick="PF('dlg2').hide();"/>
+                </center>
+            </h:form> 
+
+        </p:dialog>
+        <p:toolbar>
+            <f:facet name="left">
+
+                <p:link  outcome="index" value="INICIO"/>
+
+            </f:facet>
+
+        </p:toolbar>
+
+
+    </h:body>
+</html>

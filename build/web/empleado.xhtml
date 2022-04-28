@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Empleado</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    </h:head>
+    <h:body>
+        
+        <h:form id = "formInsertar">
+            <center>
+                <p:panel header="INGRESAR NUEVO EMPLEADO">
+                    <h:panelGrid columns="2" cellpadding="5">
+                        <p:outputLabel value =" Nombre: "/>
+                        <p:inputText  value ="#{empleadoBean.empleado.nombre}" maxlength="45" required="true" requiredMessage="Nombre es obligatorio"/>
+                        <p:outputLabel value =" Apellidos: "/>
+                        <p:inputText value ="#{empleadoBean.empleado.apellidos}" maxlength="45" required="true" requiredMessage="Apellidos es obligatorio"/>
+                        <p:outputLabel value="Sexo:" />
+                        <h:selectOneMenu id="sexo" value="#{empleadoBean.empleado.sexo}" required="true" label="Sexo" style="width: 195px" requiredMessage="Sexo es obligatorio">
+                            <f:selectItem itemLabel="Selecciona" itemValue="" noSelectionOption="true"/>
+                            <f:selectItem itemLabel="Masculino" itemValue="M"/>
+                            <f:selectItem itemLabel="Femenino" itemValue="F"/>
+
+                        </h:selectOneMenu>
+                        <p:outputLabel value="Fecha de contratación:"/>
+                        <p:calendar value ="#{empleadoBean.empleado.fechaContra}" required="true" requiredMessage="Fecha de contratacion es obligatoria"/>
+                        <p:outputLabel value="Empresa:"/>
+                        <h:selectOneMenu id="empresa" value="#{empleadoBean.empleado.empresa.idEmp}" required="true" label="Empresa" style="width: 195px" requiredMessage="Empresa es obligatoria"  >
+                            <f:selectItem itemLabel="Selecciona" itemValue="" noSelectionOption="true"/>
+                            <f:selectItems value="#{empleadoBean.listEmpresas}" />
+
+                        </h:selectOneMenu>   
+                        <p:outputLabel value ="Cargo: "/>
+                        <p:inputText value ="#{empleadoBean.empleado.cargo}" maxlength="45" required="true" requiredMessage="Cargo es obligatorio"/>
+                    </h:panelGrid>
+
+                    <p:growl id="growl" life="1000"/>
+                    <p:commandButton actionListener="#{empleadoBean.insertar()}"
+                                     value ="Agregar Empleado" update =":formListar :formInsertar" icon="ui-icon-disk">
+                    </p:commandButton>
+                    <p:commandButton actionListener="#{empleadoBean.cancelar()}"
+                                     value ="Cancelar" update =":formListar :formInsertar" icon="ui-icon-close"/> 
+                </p:panel>
+            </center>
+        </h:form>
+        <h:form id="formListar">
+             <center>
+                 <p:panel header="BÚSQUEDA Y LISTADO">
+            <div style="float:right;padding-top: 5px;">
+                <p:outputLabel value="Exportar datos"/>
+                <h:commandLink>
+                    <h:graphicImage url="/images/pdf.png" width="24"/>
+                    <p:dataExporter type="pdf" target="tl" fileName="Empleados" />
+                </h:commandLink>
+
+                <h:commandLink>
+                    <h:graphicImage url="/images/excel.png" width="27"/>
+                    <p:dataExporter type="xls" target="tl" fileName="Empleados" />
+                </h:commandLink>   
+            </div> 
+            <p:dataTable id="tl" var="car" value="#{empleadoBean.empleados}" emptyMessage="¡No Hay Registros!"
+                                     rows="5" paginator="true" paginatorPosition="top" paginatorTemplate="{CurrentPageReport}
+                                     {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} 
+                                     {LastPageLink} {RowsPerPageDropdown}"
+                                     rowsPerPageTemplate="5,10,15">
+                <p:column headerText="Id Empleado" filterBy="#{car.idE}">
+                    <h:outputText value="#{car.idE}" />
+                </p:column>
+                <p:column headerText="Nombre" filterBy="#{car.nombre}">
+                    <h:outputText value="#{car.nombre}" />
+                </p:column>
+                <p:column headerText="Apellidos" filterBy="#{car.apellidos}">
+                    <h:outputText value="#{car.apellidos}" />
+                </p:column>
+                <p:column headerText="Sexo" filterBy="#{car.sexo}">
+                    <h:outputText value="#{car.sexo}" />
+                </p:column>
+                <p:column headerText="Fecha de Contratación" filterBy="#{car.fechaContra}">
+                    <h:outputText value="#{car.fechaContra}" />
+                </p:column>
+                <p:column headerText="Nombre de empresa proveniente" filterBy="#{car.empresa.nombre}">
+                    <h:outputText value="#{car.empresa.nombre}" />
+                </p:column>
+                <p:column headerText="Cargo" filterBy="#{car.cargo}">
+                    <h:outputText value="#{car.cargo}" />
+                </p:column>
+                <p:column headerText="Accion" exportable="false">
+                    <center>
+                    <p:commandButton 
+                                       value="Editar"
+                                     onclick="PF('dlgmodificar').show()"
+                                     update=":formModificar"
+                                     icon="ui-icon-pencil">
+                        <f:setPropertyActionListener
+                            target="#{empleadoBean.empleado}"
+                            value="#{car}"/>
+                    </p:commandButton>    
+                        </center>
+                </p:column>
+
+                <p:column headerText="Accion" exportable="false">
+                    <center>
+                              <p:commandButton value="Eliminar"
+                                               update=":formModificar"
+                                     icon="ui-icon-trash"
+                                     onclick="PF('dlgeliminar').show()"
+                                     >
+                        <f:setPropertyActionListener
+                            target="#{empleadoBean.empleado}"
+                            value="#{car}"/>
+                    </p:commandButton>    
+                        </center>
+                </p:column>   
+            </p:dataTable> 
+                     </p:panel>
+             </center>
+        </h:form>
+        <p:dialog id="dlg" header="Modificar empleado"
+                  showEffect="explode" hideEffect="explode" 
+                  widgetVar="dlgmodificar" modal="true"
+                  resizable="false" minWidth="200">
+            
+          <p:growl id="mensajeGeneral" autoUpdate="true" showDetail="true" life="3000"/>    
+            <h:form id="formModificar"> 
+                <h:panelGrid columns="2" cellpadding="5">
+                    <p:outputLabel value =" Nombre: "/>
+                    <p:inputText value ="#{empleadoBean.empleado.nombre}" maxlength="45" required="true" requiredMessage="Nombre es obligatorio"/>
+                    <p:outputLabel value =" Apellidos: "/>
+                    <p:inputText value ="#{empleadoBean.empleado.apellidos}" maxlength="45" required="true" requiredMessage="Apellidos es obligatorio"/>
+                    <p:outputLabel value="Sexo:"/>
+                    <h:selectOneMenu id="sexo" value="#{empleadoBean.empleado.sexo}" required="true" label="Sexo" style="width: 195px" requiredMessage="Sexo es obligatorio">
+                        <f:selectItem itemLabel="Selecciona" itemValue="" noSelectionOption="true"/>
+                        <f:selectItem itemLabel="Masculino" itemValue="M"/>
+                        <f:selectItem itemLabel="Femenino" itemValue="F"/>
+
+                    </h:selectOneMenu>
+                    <p:outputLabel value="Fecha de contratación:"/>
+                    <p:calendar value ="#{empleadoBean.empleado.fechaContra}" required="true" requiredMessage="Fecha de contratacion es obligatoria"/>
+                    <p:outputLabel value="Empresa:"/>
+                    <h:selectOneMenu id="empresa" value="#{empleadoBean.empleado.empresa.idEmp}" required="true" label="Empresa" style="width: 195px" requiredMessage="Empresa es obligatoria">
+                        <f:selectItem itemLabel="Selecciona" itemValue="" noSelectionOption="true"/>
+                        <f:selectItems value="#{empleadoBean.listEmpresas}" />
+
+                    </h:selectOneMenu>   
+                    <p:outputLabel value ="Cargo: "/>
+                    <p:inputText value ="#{empleadoBean.empleado.cargo}"/>
+                </h:panelGrid>
+                <center>
+                <p:commandButton actionListener="#{empleadoBean.modificar()}"
+                                 value="Modificar empleado"
+                                 update=":formListar"
+                                   icon="ui-icon-check"
+                                 onclick="PF('dlgmodificar').hide();"/>
+                <p:commandButton value="Cancelar"
+                                   icon="ui-icon-close"
+                                 onclick="PF('dlgmodificar').hide();"/>
+                </center>
+            </h:form> 
+
+        </p:dialog>
+
+        <p:dialog id="dlg2" header="Eliminar empleado"
+                  showEffect="explode" hideEffect="explode"
+                  widgetVar="dlgeliminar" modal="true"
+                  resizable="false" minWidth="200">
+            <h:form id="formEliminar"> 
+
+                <h:outputLabel value="¿Esta seguro de eliminar? El registro puede estar relacionado con otros y no realizarse la eliminación"/>
+                <center>
+                <p:commandButton actionListener="#{empleadoBean.eliminar()}"
+                                 value="Si"
+                                 update=":formListar"
+                                   icon="ui-icon-check"
+                                 onclick="PF('dlgeliminar').hide();"/>
+                <p:commandButton value="No"
+                                 actionListener="#{empleadoBean.cancelar()}"
+                                   icon="ui-icon-close"
+                                 onclick="PF('dlg').hide();"/>
+                </center>
+            </h:form> 
+        </p:dialog> 
+
+
+        <p:toolbar>
+            <f:facet name="left">
+
+                <p:link  outcome="index" value="INICIO"/>
+
+            </f:facet>
+
+        </p:toolbar>
+
+    </h:body>
+</html>

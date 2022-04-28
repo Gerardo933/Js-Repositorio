@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Empresa</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    </h:head>
+    <h:body>
+
+
+        <h:form id="formInsertar" >
+            <center>
+                <p:panel header="INGRESAR NUEVA EMPRESA">
+
+                    <h:panelGrid columns="2" cellpadding="5">
+                        <p:outputLabel value="Nombre:"/>
+                        <p:inputText value="#{empresaBean.empresa.nombre}" maxlength="45" required="true" requiredMessage="Nombre de la empresa es obligatorio"/>
+                        <p:outputLabel value="Direccion:"/>
+                        <p:inputText value="#{empresaBean.empresa.direccion}" maxlength="45" required="true" requiredMessage="Direccion es obligatoria"/>
+                        <p:outputLabel value="Responsable:"/>
+                        <p:inputText value="#{empresaBean.empresa.responsable}" maxlength="45" required="true" requiredMessage="Nombre del responsable es obligatorio"/>
+                        <p:outputLabel  value="Telefono:"/>
+                        <p:inputText type="number" value="#{empresaBean.empresa.telefono}"   maxlength="12" required="true" requiredMessage=" Telefono Obligatorio"/> 
+                    </h:panelGrid>
+
+
+                    <p:growl id="growl" life="1000"/>
+                    <p:commandButton actionListener="#{empresaBean.insertar()}"
+                                     value ="Agregar empresa" update =":formListar :formInsertar" icon="ui-icon-disk">
+                    </p:commandButton>
+                    <p:commandButton actionListener="#{empresaBean.cancelar()}"
+                                     value ="Cancelar" update =":formListar :formInsertar" icon="ui-icon-close"/>
+                </p:panel>
+            </center>
+        </h:form> 
+        <h:form id="formListar">
+            <center>
+                <p:panel header="BÚSQUEDA Y LISTADO">
+                    <div style="float:right;padding-top: 5px;">
+                        <p:outputLabel value="Exportar datos"/>
+                        <h:commandLink>
+                            <h:graphicImage url="/images/pdf.png" width="24"/>
+                            <p:dataExporter type="pdf" target="tl" fileName="Empresas de los empleados" />
+                        </h:commandLink>
+
+                        <h:commandLink>
+                            <h:graphicImage url="/images/excel.png" width="27"/>
+                            <p:dataExporter type="xls" target="tl" fileName="Empresas de los empleados" />
+                        </h:commandLink>   
+                    </div> 
+                    <p:dataTable id="tl" var="car" value="#{empresaBean.empresas}" emptyMessage="¡No Hay Registros!"
+                                 rows="5" paginator="true" paginatorPosition="top" paginatorTemplate="{CurrentPageReport}
+                                 {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} 
+                                 {LastPageLink} {RowsPerPageDropdown}"
+                                 rowsPerPageTemplate="5,10,15">
+                        <p:column headerText="Id Empresa" filterBy="#{car.idEmp}">
+                            <h:outputText value="#{car.idEmp}" />
+                        </p:column>
+
+                        <p:column headerText="Nombre" filterBy="#{car.nombre}">
+                            <h:outputText value="#{car.nombre}" />
+                        </p:column>
+
+                        <p:column headerText="Direccion" filterBy="#{car.direccion}">
+                            <h:outputText value="#{car.direccion}" />
+                        </p:column>
+
+                        <p:column headerText="Responsable" filterBy="#{car.responsable}">
+                            <h:outputText value="#{car.responsable}" />
+                        </p:column>
+
+                        <p:column headerText="Telefono" filterBy="#{car.telefono}">
+                            <h:outputText value="#{car.telefono}" />
+                        </p:column>
+
+                        <p:column headerText="Accion" exportable="false">
+                            <center>
+                                <p:commandButton value="Editar"
+                                                 onclick="PF('dlgmodificar').show()"
+                                                 update=":formModificar" icon="ui-icon-pencil">
+                                    <f:setPropertyActionListener
+                                        target="#{empresaBean.empresa}"
+                                        value="#{car}"/>
+                                </p:commandButton> 
+                            </center>
+                        </p:column>
+
+                        <p:column headerText="Accion" exportable="false">
+                            <center>
+                                <p:commandButton value="Eliminar"
+                                                 onclick="PF('dlgeliminar').show()"
+                                                 update=":formModificar"  icon="ui-icon-trash">
+                                    <f:setPropertyActionListener
+                                        target="#{empresaBean.empresa}"
+                                        value="#{car}"/>
+                                </p:commandButton> 
+                            </center>
+                        </p:column>
+
+
+                    </p:dataTable>
+                </p:panel>
+            </center>
+        </h:form>          
+        <p:dialog id="dlg" header="Modificar Empresa"
+                  showEffect="explode" hideEffect="explode"
+                  widgetVar="dlgmodificar" modal="true"
+                  resizable="false" minWidth="200">
+            
+   <p:growl id="mensajeGeneral" autoUpdate="true" showDetail="true" life="3000"/> 
+            <h:form id="formModificar"> 
+                <h:panelGrid columns="2" cellpadding="5">
+                    <p:outputLabel value="Nombre:"/>
+                    <p:inputText value="#{empresaBean.empresa.nombre}" maxlength="45" required="true" requiredMessage="Nombre de la empresa es obligatorio"/>
+                    <p:outputLabel value="Direccion:"/>
+                    <p:inputText value="#{empresaBean.empresa.direccion}" maxlength="45" required="true" requiredMessage="Direccion es obligatoria"/>
+                    <p:outputLabel value="Responsable:"/>
+                    <p:inputText value="#{empresaBean.empresa.responsable}" maxlength="45" required="true" requiredMessage="Nombre del responsable es obligatorio"/>
+                    <p:outputLabel value="Telefono:"/>
+                    <p:inputText type="number" value="#{empresaBean.empresa.telefono}" maxlength="12" required="true" requiredMessage=" Telefono Obligatorio"/> 
+
+
+
+                </h:panelGrid>
+                <center>
+                    <p:commandButton actionListener="#{empresaBean.modificar()}"
+                                     value="Modificar empresa"
+                                     update=":formListar"
+                                     icon="ui-icon-check"
+                                     onclick="PF('dlgmodificar').hide();"/>
+                    <p:commandButton value="Cancelar"
+                                     icon="ui-icon-close"
+                                     onclick="PF('dlgmodificar').hide();"/>
+                </center>
+            </h:form> 
+
+        </p:dialog>
+
+        <p:dialog id="dlg2" header="Eliminar empresa"
+                  showEffect="explode" hideEffect="explode"
+                  widgetVar="dlgeliminar" modal="true"
+                  resizable="false" minWidth="200">
+            <h:form id="formEliminar"> 
+
+                <h:outputLabel value="¿Esta seguro de eliminar? El registro puede estar relacionado con otros y no realizarse la eliminación"/>
+                <center>
+                    <p:commandButton actionListener="#{empresaBean.eliminar()}"
+                                     value="Si"
+                                     update=":formListar"
+                                     icon="ui-icon-check"
+                                     onclick="PF('dlgeliminar').hide();"/>
+                    <p:commandButton value="No"
+                                     icon="ui-icon-close"
+                                     actionListener="#{empresaBean.cancelar()}"
+                                     onclick="PF('dlg2').hide();"/>
+                </center>
+            </h:form> 
+
+        </p:dialog>
+
+
+
+
+        <p:toolbar>
+            <f:facet name="left">
+
+                <p:link  outcome="index" value="INICIO"/>
+
+            </f:facet>
+
+        </p:toolbar>
+
+
+
+    </h:body>
+</html>

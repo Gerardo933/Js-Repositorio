@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 7/12/2020 11:16:12 PM by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="Model.Recibeproducto" table="recibeproducto" catalog="tercero" optimistic-lock="version">
+        <id name="idRecibe" type="java.lang.Integer">
+            <column name="idRecibe" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="producto" class="Model.Producto" fetch="select">
+            <column name="IdProd" />
+        </many-to-one>
+        <many-to-one name="proveedor" class="Model.Proveedor" fetch="select">
+            <column name="IdProv" />
+        </many-to-one>
+        <property name="hora" type="time">
+            <column name="hora" length="8" />
+        </property>
+    </class>
+</hibernate-mapping>

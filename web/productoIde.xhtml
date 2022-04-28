@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Producto</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    </h:head>
+    <h:body>
+        <h:form id="formInsertar">
+              <center>
+                  <p:panel header="INGRESAR NUEVO PRODUCTO">
+                  
+            <h:panelGrid columns="2" cellpadding="5">
+                <p:outputLabel value="Nombre:"/>
+                <p:inputText value="#{productoBean.producto.nombre}" maxlength="45" required="true" requiredMessage="Nombre es obligatorio"/>
+                <p:outputLabel value="Peso:"/>
+                <p:inputText type="number" value="#{productoBean.producto.pesoVol}" maxlength="45" required="true" requiredMessage="Peso es obligatorio"/>
+                <p:outputLabel value="Costo:"/>
+                <p:inputText type="number"  value="#{productoBean.producto.costo}" maxlength="45" required="true" requiredMessage="Nombre es obligatorio"/> 
+                <p:outputLabel value="Proveedor:"/>
+                <h:selectOneMenu id="proveedor" value="#{productoBean.producto.proveedor.idProv}" required="true" label="Proveedores" style="width: 195px">
+                    <f:selectItem itemLabel="Selecciona" itemValue="" noSelectionOption="true"/>
+                    <f:selectItems value="#{productoBean.listProvedor}" />
+
+                </h:selectOneMenu>  
+            </h:panelGrid> 
+
+            <p:growl id="growl" life="1000"/>
+            <p:commandButton actionListener="#{productoBean.insertar()}"
+                             value ="Agregar Producto" update =":formListar :formInsertar" icon="ui-icon-disk">
+                <p:collector value="#{productoBean.producto}" addTo="#{productoBean.productos}" unique="true"  />
+            </p:commandButton>
+             <p:commandButton actionListener="#{productoBean.cancelar()}"
+                             value ="Cancelar" update =":formInsertar"
+                             icon="ui-icon-close"/>    
+              
+                  </p:panel>
+              </center>
+        </h:form>              
+        <h:form id="formListar">
+            <center>
+                <p:panel header="BÚSQUEDA Y LISTADO">
+            <div style="float:right;padding-top: 5px;">
+                <p:outputLabel value="Exportar datos"/>
+                <h:commandLink>
+                    <h:graphicImage url="/images/pdf.png" width="24"/>
+                    <p:dataExporter type="pdf" target="tl" fileName="Productos" />
+                </h:commandLink>
+
+                <h:commandLink>
+                    <h:graphicImage url="/images/excel.png" width="27"/>
+                    <p:dataExporter type="xls" target="tl" fileName="Productos" />
+                </h:commandLink>   
+            </div> 
+            <p:dataTable id="tl" var="car" value="#{productoBean.productos}"     rows="5" paginator="true" paginatorPosition="top" paginatorTemplate="{CurrentPageReport}
+                                     {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} 
+                                     {LastPageLink} {RowsPerPageDropdown}"
+                                     rowsPerPageTemplate="5,10,15">
+
+                <p:column headerText="Id Producto" filterBy="#{car.idProd}">
+                    <h:outputText value="#{car.idProd}"/>
+                </p:column>
+                <p:column headerText="Nombre" filterBy="#{car.nombre}">
+                    <h:outputText value="#{car.nombre}" />
+                </p:column>
+
+                <p:column headerText="Peso" filterBy="#{car.pesoVol}">
+                    <h:outputText value="#{car.pesoVol}" />
+                </p:column>
+
+                <p:column headerText="Costo" filterBy="#{car.costo}">
+                    <h:outputText value="#{car.costo}" />
+                </p:column>
+                <p:column headerText="Proveedor" filterBy="#{car.proveedor.empresa}">
+                    <h:outputText value="#{car.proveedor.empresa}" />
+                </p:column>
+
+                <p:column headerText="Accion" exportable="false">
+                    <center>
+                    <p:commandButton value="Editar"
+                                     onclick="PF('dlgmodificar').show()"
+                                     update=":formModificar"
+                                     icon="ui-icon-pencil">
+                        <f:setPropertyActionListener
+                            target="#{productoBean.producto}"
+                            value="#{car}"/>
+                    </p:commandButton>
+                        </center>
+                </p:column>
+
+                <p:column headerText="Accion" exportable="false">
+                    <center>
+                    <p:commandButton value="Eliminar"
+                                     onclick="PF('dlgeliminar').show()"
+                                     update=":formModificar"
+                                     icon="ui-icon-trash">
+                        <f:setPropertyActionListener
+                            target="#{productoBean.producto}"
+                            value="#{car}"/>
+                    </p:commandButton>    
+            </center>
+                </p:column>
+
+            </p:dataTable>
+                    </p:panel>
+            </center>
+        </h:form>
+
+        <p:dialog id="dlg" header="Modificar Producto"
+                  showEffect="explode" hideEffect="explode"
+                  widgetVar="dlgmodificar" modal="true"
+                  resizable="false" minWidth="200">
+            
+            <p:growl id="mensajeGeneral" autoUpdate="true" showDetail="true" life="3000"/>
+            <h:form id="formModificar"> 
+                <h:panelGrid columns="2" cellpadding="5">
+                     <p:outputLabel value="Nombre:"/>
+                <p:inputText value="#{productoBean.producto.nombre}" maxlength="45" required="true" requiredMessage="Nombre es obligatorio"/>
+                <p:outputLabel value="Peso:"/>
+                <p:inputText type="number" value="#{productoBean.producto.pesoVol}" maxlength="45" required="true" requiredMessage="Peso es obligatorio"/>
+                <p:outputLabel value="Costo:"/>
+                <p:inputText type="number" value="#{productoBean.producto.costo}" maxlength="25" required="true" requiredMessage="Nombre es obligatorio"/> 
+                <p:outputLabel value="Proveedor:"/>
+                <h:selectOneMenu id="proveedor" value="#{productoBean.producto.proveedor.idProv}" required="true" label="Proveedores" style="width: 195px">
+                    <f:selectItem itemLabel="Selecciona" itemValue="" noSelectionOption="true"/>
+                    <f:selectItems value="#{productoBean.listProvedor}" />
+
+                </h:selectOneMenu>   
+                </h:panelGrid>
+                <center>
+                <p:commandButton actionListener="#{productoBean.modificar()}"
+                                 value="Modificar producto"
+                                 update=":formListar"
+                                   icon="ui-icon-check"
+                                 onclick="PF('dlgmodificar').hide();"/>
+                <p:commandButton value="Cancelar"
+                                   icon="ui-icon-close"
+                                 onclick="PF('dlgmodificar').hide();"/>
+                </center>
+            </h:form> 
+
+        </p:dialog>
+
+        <p:dialog id="dlg2" header="Eliminar producto"
+                  showEffect="explode" hideEffect="explode"
+                  widgetVar="dlgeliminar" modal="true"
+                  resizable="false" minWidth="200">
+            <h:form id="formEliminar"> 
+                 <h:outputLabel value="¿Esta seguro de eliminar? El registro puede estar relacionado con otros y no realizarse la eliminación"/>
+                <center>
+                <p:commandButton actionListener="#{productoBean.eliminar()}"
+                                 value="Si"
+                                 update=":formListar"
+                                   icon="ui-icon-check"
+                                 onclick="PF('dlgeliminar').hide();"/>
+                <p:commandButton value="No"
+                                 actionListener="#{productoBean.cancelar()}"
+                                   icon="ui-icon-close"
+                                 onclick="PF('dlg2').hide();"/>
+                </center>
+            </h:form> 
+
+        </p:dialog>
+        <p:toolbar>
+            <f:facet name="left">
+
+                <p:link  outcome="index" value="INICIO"/>
+
+            </f:facet>
+
+        </p:toolbar>
+
+    </h:body>
+</html>
